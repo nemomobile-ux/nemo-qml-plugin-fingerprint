@@ -1,0 +1,8 @@
+*.o
+*.so
+*.pro.user
+CMakeLists.txt.user
+moc_*
+Makefile
+documentation.list
+build

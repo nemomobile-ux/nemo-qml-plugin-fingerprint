@@ -1,8 +1,15 @@
 ### Sets QT_INSTALL_QML to the directory where QML Plugins should be installed
 function(FindQtInstallQml)
-    find_program(QMAKE NAMES qmake-qt5 qmake)
+    if (QT_VERSION_MAJOR EQUAL 5)
+        find_program(QMAKE NAMES qmake-qt5 qmake)
+    elseif (QT_VERSION_MAJOR EQUAL 6)
+        find_program(QMAKE NAMES qmake-qt6 qmake6)
+    else()
+        message(FATAL_ERROR "incorrect QT_VERSION_MAJOR")
+    endif ()
+
     if(NOT QMAKE)
-    message(FATAL_ERROR "qmake not found")
+        message(FATAL_ERROR "qmake not found")
     endif()
     execute_process(
         COMMAND ${QMAKE} -query QT_INSTALL_QML
@@ -29,12 +36,12 @@ set(HEADERS
     fingerprintdevice.h
     fingerprintmodel.h)
 
-qt5_add_dbus_interface(nemo_fingerptint_SRCS
+qt_add_dbus_interface(nemo_fingerptint_SRCS
     net.reactivated.Fprint.Device.xml
     fprint_device_interface
 )
 
-qt5_add_dbus_interface(nemo_fingerptint_SRCS
+qt_add_dbus_interface(nemo_fingerptint_SRCS
     net.reactivated.Fprint.Manager.xml
     fprint_manager_interface
 )
@@ -42,10 +49,10 @@ qt5_add_dbus_interface(nemo_fingerptint_SRCS
 add_library(nemofingerprint SHARED ${nemo_fingerptint_SRCS} ${HEADERS})
 
 target_link_libraries(nemofingerprint
-    Qt5::Core
-    Qt5::Qml 
-    Qt5::Quick
-    Qt5::DBus)
+    Qt${QT_VERSION_MAJOR}::Core
+    Qt${QT_VERSION_MAJOR}::Qml
+    Qt${QT_VERSION_MAJOR}::Quick
+    Qt${QT_VERSION_MAJOR}::DBus)
 
 FindQtInstallQml()
 
